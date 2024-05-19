@@ -35,6 +35,14 @@ async def deposit(event):
                 [Button.inline("I AGREE ✅", data="agree")]]
             )
         return
+    if not event.sender_id in UPI and not event.sender_id in CRYPTO:
+        await event.reply(
+            "Choose your payment mode for deposit and withdrawals.",
+            buttons=[
+                [Button.inline("CRYPTO 🪙", data="crypto")],
+                [Button.inline("UPI 🇮🇳", data="UPI")]]
+            )
+        return
     if event.sender_id in CRYPTO:
         await event.reply("Deposit coins.", buttons=[[Button.inline("X coins - Y USDT", data="None")]])
     else:
@@ -47,6 +55,14 @@ async def withdraw(event):
             "Do you agree with our terms and conditions?",
             buttons=[
                 [Button.inline("I AGREE ✅", data="agree")]]
+            )
+        return
+    if not event.sender_id in UPI and not event.sender_id in CRYPTO:
+        await event.reply(
+            "Choose your payment mode for deposit and withdrawals.",
+            buttons=[
+                [Button.inline("CRYPTO 🪙", data="crypto")],
+                [Button.inline("UPI 🇮🇳", data="UPI")]]
             )
         return
     if event.sender_id in CRYPTO:
