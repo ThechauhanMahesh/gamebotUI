@@ -9,6 +9,8 @@ UPI = False
 
 @Drone.on(events.NewMessage(incoming=True,func=lambda e: e.is_private))
 async def compin(event):
+    if event.text in ["/deposit", "/withdraw"]:
+        return
     global AGREE
     if AGREE:
         tag = f'[{event.sender.first_name}](tg://user?id={event.sender_id})'
