@@ -27,6 +27,13 @@ async def compin(event):
 
 @Drone.on(events.NewMessage(incoming=True, pattern="/deposit"))
 async def deposit(event):
+    if not AGREE:
+        await event.reply(
+            "Do you agree with our terms and conditions?",
+            buttons=[
+                [Button.inline("I AGREE ✅", data="agree")]]
+            )
+        return
     if CRYPTO:
         await event.reply("Deposit coins.", buttons=[[Button.inline("X coins - Y USDT", data="None")]])
     else:
@@ -34,6 +41,13 @@ async def deposit(event):
 
 @Drone.on(events.NewMessage(incoming=True, pattern="/withdraw"))
 async def withdraw(event):
+    if not AGREE:
+        await event.reply(
+            "Do you agree with our terms and conditions?",
+            buttons=[
+                [Button.inline("I AGREE ✅", data="agree")]]
+            )
+        return
     if CRYPTO:
         await event.reply("withdraw coins.", buttons=[[Button.inline("X coins - Y USDT", data="None")]])
     else:
