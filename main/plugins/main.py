@@ -3,16 +3,15 @@
 from telethon import events, Button
 from .. import bot as Drone
 
-AGREE = False
-CRYPTO = False
-UPI = False
+AGREE = []
+CRYPTO = []
+UPI = []
 
 @Drone.on(events.NewMessage(incoming=True,func=lambda e: e.is_private))
 async def compin(event):
     if event.text in ["/deposit", "/withdraw"]:
         return
-    global AGREE
-    if AGREE:
+    if event.sender_id in AGREE:
         tag = f'[{event.sender.first_name}](tg://user?id={event.sender_id})'
         await event.reply(
             f"Hello {tag}, Ready to make some money? Join the contests soon, they're live.\n\nPlay DEMO to improve your skills.",
@@ -29,36 +28,35 @@ async def compin(event):
 
 @Drone.on(events.NewMessage(incoming=True, pattern="/deposit"))
 async def deposit(event):
-    if not AGREE:
+    if not event.sender_id in AGREE:
         await event.reply(
             "Do you agree with our terms and conditions?",
             buttons=[
                 [Button.inline("I AGREE ✅", data="agree")]]
             )
         return
-    if CRYPTO:
+    if event.sender_id in CRYPTO:
         await event.reply("Deposit coins.", buttons=[[Button.inline("X coins - Y USDT", data="None")]])
     else:
         await event.reply("Deposit coins.", buttons=[[Button.inline("X coins - Y INR", data="None")]])
 
 @Drone.on(events.NewMessage(incoming=True, pattern="/withdraw"))
 async def withdraw(event):
-    if not AGREE:
+    if not event.sender_id in AGREE:
         await event.reply(
             "Do you agree with our terms and conditions?",
             buttons=[
                 [Button.inline("I AGREE ✅", data="agree")]]
             )
         return
-    if CRYPTO:
+    if event.sender_id in CRYPTO:
         await event.reply("withdraw coins.", buttons=[[Button.inline("X coins - Y USDT", data="None")]])
     else:
         await event.reply("withdraw coins.", buttons=[[Button.inline("X coins - Y INR", data="None")]])
 
 @Drone.on(events.callbackquery.CallbackQuery(data="agree"))
 async def agree(event):
-    global AGREE
-    AGREE = True
+    AGREE.append(event.sender_id)
     tag = f'[{event.sender.first_name}](tg://user?id={event.sender_id})'
     await event.edit(
         f"Hello {tag}, Ready to make some money? Join the contests soon, they're live.\n\nPlay DEMO to improve your skills.",
@@ -74,7 +72,7 @@ async def demo(event):
 
 @Drone.on(events.callbackquery.CallbackQuery(data="contest"))
 async def contest(event):
-    if not UPI and not CRYPTO:
+    if not event.sender_id in UPI and not event.sender_id in CRYPTO:
         await event.edit(
             "Choose your payment mode for deposit and withdrawals.",
             buttons=[
@@ -83,7 +81,7 @@ async def contest(event):
             )
     else:
         await event.edit(
-            "Choose a pool to join ongoing contests\n\nX Coins available.",
+            "Choose a pool to join ongoing contests\n\nX coins available.",
             buttons=[
                 [Button.inline("MINI Pool - Amount", data="None")],
                 [Button.inline("JUMBO POOl - Amount", data="None")],
@@ -93,19 +91,17 @@ async def contest(event):
         
 @Drone.on(events.callbackquery.CallbackQuery(data="UPI"))
 async def upi(event):
-    global UPI
-    UPI = True
+    UPI.append(event.sender_id)
     await event.edit("Deposit coins.", buttons=[[Button.inline("X coins - Y INR", data="None")]])
 
 @Drone.on(events.callbackquery.CallbackQuery(data="crypto"))
 async def crpto(event):
-    global CRYPTO
-    CRYPTO = True
+    CRYPTO.append(event.sender_id)
     await event.edit("Deposit coins.", buttons=[[Button.inline("X coins - Y USDT", data="None")]])
 
 @Drone.on(events.callbackquery.CallbackQuery(data="deposit"))
 async def deposit(event):
-    if CRYPTO:
+    if event.sender_id in CRYPTO:
         await event.edit("Deposit coins.", buttons=[[Button.inline("X coins - Y USDT", data="None")]])
     else:
         await event.edit("Deposit coins.", buttons=[[Button.inline("X coins - Y INR", data="None")]])
