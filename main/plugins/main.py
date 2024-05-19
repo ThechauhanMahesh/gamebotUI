@@ -41,6 +41,8 @@ async def withdraw(event):
 
 @Drone.on(events.callbackquery.CallbackQuery(data="agree"))
 async def agree(event):
+    global AGREE
+    AGREE = True
     tag = f'[{event.sender.first_name}](tg://user?id={event.sender_id})'
     await event.edit(
         f"Hello {tag}, Ready to make some money? Join the contests soon, they're live.\n\nPlay DEMO to improve your skills.",
